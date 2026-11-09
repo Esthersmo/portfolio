@@ -627,11 +627,11 @@ window.initAnim=function(){
   if(!window.THREE||!THREE.GLTFLoader){document.querySelectorAll('.viewport .vp-label').forEach(function(l){l.textContent='No se pudo cargar el visor';});return;}
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var MODELS={
-    raton:{data:'RATON_GLB',file:'modelos/raton.glb',label:'Ratón · Maya + Blender → glTF',start:'Respiracion',
+    raton:{data:'RATON_GLB',box:[[0.00044,1.30677,-0.1922],[0.9896,1.40285,1.5685]],file:'modelos/raton.glb',label:'Ratón · Maya + Blender → glTF',start:'Respiracion',
       order:['Respiracion','RespiracionLigera','Andar','Correr','LOSE','Muerte'],hidden:['WIN'],once:['Muerte'],
       names:{Respiracion:'Idle',RespiracionLigera:'Respiración ligera',Andar:'Andar',Correr:'Correr',WIN:'Victoria',LOSE:'Derrota',Muerte:'Muerte'},
       cam:function(h){return {pos:[h*.87,h*.05,h*2.9],look:[0,-h*.06,0]};}},
-    perrita:{data:'PERRITA_GLB',file:'modelos/perrita.glb',label:'Perrita · Maya + Blender → glTF',start:'Idle',
+    perrita:{data:'PERRITA_GLB',box:[[0.00367,0.67132,-0.12759],[0.38318,1.34256,1.72905]],file:'modelos/perrita.glb',label:'Perrita · Maya + Blender → glTF',start:'Idle',
       order:['Idle','Correr'],hidden:['Andar','Ataque'],once:[],
       names:{Idle:'Idle',Andar:'Andar',Correr:'Correr',Ataque:'Ataque'},
       cam:function(h){return {pos:[h*1.15,h*.3,h*1.35],look:[0,-h*.05,0]};}}
@@ -651,7 +651,7 @@ window.initAnim=function(){
     var pivot=new THREE.Group();scene.add(pivot);
     var mixer=null,actions={},current=null,meshes=[],clock=new THREE.Clock(),visible=true;
 
-    var loader=new THREE.GLTFLoader();
+    var loader=new THREE.GLTFLoader();if(window.MeshoptDecoder)loader.setMeshoptDecoder(MeshoptDecoder);
     function onFail(){label.textContent='No se pudo cargar el modelo';}
     var b64=window[cfg.data];
     if(b64){var bin=atob(b64),buf=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);loader.parse(buf.buffer,'',onLoad,onFail);}
@@ -660,6 +660,7 @@ window.initAnim=function(){
     function onLoad(g){
       var m=g.scene;
       var box=new THREE.Box3().setFromObject(m), c=box.getCenter(new THREE.Vector3()), sz=box.getSize(new THREE.Vector3());
+      if(cfg.box){c.fromArray(cfg.box[0]);sz.fromArray(cfg.box[1]);} /* medidas fijas: la compresión altera el cálculo automático */
       m.position.sub(c); pivot.add(m);
       var h=Math.max(sz.x,sz.y,sz.z), cm=cfg.cam(h);
       camera.position.fromArray(cm.pos); camera.lookAt(new THREE.Vector3().fromArray(cm.look));
@@ -780,8 +781,11 @@ window.initRetrato=function(){
 (function(){
   var cache={};
   function load(src){return cache[src]||(cache[src]=new Promise(function(ok,ko){var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=ko;document.head.appendChild(s);}));}
-  function three(){return load('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js').then(function(){return load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js');});}
+  function three(){return load('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js').then(function(){return Promise.all([load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js'),load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/meshopt_decoder.js')]);});}
   function near(el,fn){if(!el)return;if(!('IntersectionObserver' in window))return fn();var io=new IntersectionObserver(function(es){if(es.some(function(e){return e.isIntersecting;})){io.disconnect();fn();}},{rootMargin:'600px 0px'});io.observe(el);}
+  /* precarga en segundo plano: cuando la página ya ha cargado, descarga el 3D para que esté listo al entrar */
+  window.addEventListener('load',function(){var c=navigator.connection;if(c&&(c.saveData||/2g/.test(c.effectiveType||'')))return;
+    setTimeout(function(){three().then(function(){return Promise.all([load('modelos/raton-glb.js'),load('modelos/perrita-glb.js')]);}).then(function(){return load('modelos/retrato-data.js');}).catch(function(){});},1500);});
   near(document.querySelector('.viewport[data-model]'),function(){three().then(function(){return Promise.all([load('modelos/raton-glb.js'),load('modelos/perrita-glb.js')]);}).then(initAnim,initAnim);});
   near(document.getElementById('vp-retrato'),function(){three().then(function(){return load('modelos/retrato-data.js');}).then(initRetrato,initRetrato);});
   /* vídeos: solo se descargan y reproducen cuando están a la vista */
