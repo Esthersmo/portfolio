@@ -345,23 +345,29 @@ h1{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:clamp(56px,13v
 @media (prefers-reduced-motion:reduce){.feat{transition:none}.feat:hover{transform:none}}
 /* 9: "Ver" siempre al pie de la tarjeta */
 .tile-go{margin-top:auto}
-/* 1: menú completo en móvil */
+/* 1: menú en móvil: botón que abre un desplegable */
+.menu-btn{display:none}
 @media (max-width:640px){
-  header{flex-wrap:wrap;row-gap:0}
-  header{padding-bottom:2px}
-  header .brand{min-height:40px}
-  header nav{width:100%;justify-content:space-between;gap:0;overflow:visible;padding-right:0}
-  header nav a{font-size:13.5px;min-height:36px}
-  header nav a[aria-current="page"]{box-shadow:none;padding-bottom:0;text-decoration:underline;text-decoration-color:var(--z);text-decoration-thickness:2px;text-underline-offset:7px}
+  .menu-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin-right:-8px;border:0;background:none;color:var(--fg);cursor:pointer;border-radius:8px}
+  .menu-btn svg{width:24px;height:24px}
+  .menu-btn .x{display:none}
+  header.open .menu-btn .x{display:block}
+  header.open .menu-btn .bars{display:none}
+  header nav{display:none;position:absolute;left:-16px;right:-16px;top:100%;flex-direction:column;gap:0;padding:8px 16px 16px;background:var(--bg);border-bottom:1px solid var(--line);box-shadow:0 12px 24px rgba(0,0,0,.45);overflow:visible}
+  header.open nav{display:flex}
+  header.open{clip-path:none;box-shadow:-100vmax 0 0 var(--bg),100vmax 0 0 var(--bg)}
+  header nav a{font-size:17px;min-height:48px;padding:0 4px;border-bottom:1px solid var(--line)}
+  header nav a:last-child{border-bottom:0}
+  header nav a[aria-current="page"]{box-shadow:inset 3px 0 0 var(--z);padding-left:14px;color:var(--fg)}
 }
-@media (max-width:360px){header nav a{font-size:12.5px}}
 </style>
 
 <script>(function(){var v=location.hash.slice(1);if(["modelado","animacion","personajes","desarrollo"].indexOf(v)>-1)document.documentElement.setAttribute("data-view",v);else document.documentElement.setAttribute("data-view","inicio");})();</script>
 <div class="wrap">
   <header>
     <a class="brand" href="#inicio">Sobre mí</a>
-    <nav aria-label="Secciones">
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú"><svg class="bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <nav id="menu" aria-label="Secciones">
       <a href="#modelado">Modelado</a>
       <a href="#animacion">Animación</a>
       <a href="#personajes">Personajes</a>
@@ -848,5 +854,15 @@ window.initRetrato=function(){
   }
   window.addEventListener('hashchange',function(){apply(false);});
   apply(true);
+})();
+</script>
+<script>
+(function(){var hd=document.querySelector('.wrap > header'),b=hd&&hd.querySelector('.menu-btn');if(!b)return;
+  function set(o){hd.classList.toggle('open',o);b.setAttribute('aria-expanded',o);b.setAttribute('aria-label',o?'Cerrar menú':'Abrir menú');}
+  b.addEventListener('click',function(e){e.stopPropagation();set(!hd.classList.contains('open'));});
+  hd.querySelectorAll('nav a').forEach(function(a){a.addEventListener('click',function(){set(false);});});
+  document.addEventListener('click',function(e){if(!hd.contains(e.target))set(false);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&hd.classList.contains('open')){set(false);b.focus();}});
+  window.addEventListener('hashchange',function(){set(false);});
 })();
 </script>
