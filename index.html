@@ -195,6 +195,7 @@ footer{flex-direction:column;align-items:center;justify-content:center;text-alig
 .making{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:48px}
 .making figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
 .making img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:8px;background:#14151a}
+.making:not(.proc) img{aspect-ratio:1/1;object-fit:contain}
 .making figcaption{display:flex;flex-direction:column;gap:4px;text-align:center}
 .making figcaption b{font-family:var(--font-display);font-size:17px}
 .making figcaption span{color:var(--muted);font-size:14px;text-wrap:pretty}
@@ -557,10 +558,10 @@ h1{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:clamp(56px,13v
     </article>
     <h4 class="sub">Cómo se hizo</h4>
     <div class="making">
-      <figure><img loading="lazy" decoding="async" src="imagenes/ouch-raton.jpg" width="1200" height="750" alt="Boceto del ratón, modelo en Maya y modelo texturizado en Blender"><figcaption><b>El ratón</b><span>Del boceto al modelo en Maya, y de ahí a Blender para el rigging, las UVs y la textura pintada a mano.</span></figcaption></figure>
-      <figure><img loading="lazy" decoding="async" src="imagenes/ouch-perrita.jpg" width="1200" height="750" alt="UVs y modelo texturizado de la perrita guardiana en Blender"><figcaption><b>La guardiana</b><span>Basada en una perrita real, con sus manchas de pelaje. Esqueleto con Rigify y cuatro animaciones.</span></figcaption></figure>
-      <figure><img loading="lazy" decoding="async" src="imagenes/ouch-guarida.jpg" width="1200" height="750" alt="Diorama real de la guarida y su modelo 3D"><figcaption><b>La guarida</b><span>Modelada a partir de fotos de un diorama real: una puerta de madera dentro de una herradura.</span></figcaption></figure>
-      <figure><img loading="lazy" decoding="async" src="imagenes/ouch-nivel.jpg" width="1200" height="750" alt="NavMesh del nivel visto desde arriba en Unity"><figcaption><b>Nivel e IA</b><span>El mobiliario permite esconderse y cruzar de una zona a otra; la guardiana patrulla sobre una NavMesh.</span></figcaption></figure>
+      <figure><img loading="lazy" decoding="async" src="imagenes/ouch-raton.jpg" width="1000" height="1000" alt="Boceto del ratón, modelo en Maya y modelo texturizado en Blender"><figcaption><b>El ratón</b><span>Del boceto al modelo en Maya, y de ahí a Blender para el rigging, las UVs y la textura pintada a mano.</span></figcaption></figure>
+      <figure><img loading="lazy" decoding="async" src="imagenes/ouch-perrita.jpg" width="1000" height="1000" alt="UVs y modelo texturizado de la perrita guardiana en Blender"><figcaption><b>La guardiana</b><span>Basada en una perrita real, con sus manchas de pelaje. Esqueleto con Rigify y cuatro animaciones.</span></figcaption></figure>
+      <figure><img loading="lazy" decoding="async" src="imagenes/ouch-guarida.jpg" width="1000" height="1000" alt="Diorama real de la guarida y su modelo 3D"><figcaption><b>La guarida</b><span>Modelada a partir de fotos de un diorama real: una puerta de madera dentro de una herradura.</span></figcaption></figure>
+      <figure><img loading="lazy" decoding="async" src="imagenes/ouch-nivel.jpg" width="1000" height="1000" alt="NavMesh del nivel visto desde arriba en Unity"><figcaption><b>Nivel e IA</b><span>El mobiliario permite esconderse y cruzar de una zona a otra; la guardiana patrulla sobre una NavMesh.</span></figcaption></figure>
     </div>
     <h3 class="dev-title">Desarrollo web</h3>
     <p class="dev-note">Desarrollado con Claude</p>
